@@ -86,9 +86,7 @@ def load_embedding_model():
     Load sentence-transformer model once.
     """
 
-    return SentenceTransformer(
-        EMBEDDING_MODEL_NAME
-    )
+    return SentenceTransformer(EMBEDDING_MODEL_NAME)
 
 
 # ---------------------------------------------------------------------------
@@ -167,7 +165,6 @@ class NearestCentroidClassifier:
         for class_label in self.classes_:
 
             class_embeddings = X[y == class_label]
-
             centroid = (class_embeddings.mean(axis=0))
             centroids.append(centroid)
 
@@ -209,9 +206,7 @@ def build_classifier(classifier_name):
     if classifier_name == "Nearest Centroid":
         return NearestCentroidClassifier()
 
-    raise ValueError(
-        f"Unknown classifier: {classifier_name}"
-    )
+    raise ValueError(f"Unknown classifier: {classifier_name}")
 
 
 # ---------------------------------------------------------------------------
@@ -340,24 +335,19 @@ def run_embedding_experiments():
 
             train_embeddings, normalization_train_time = (
                 apply_normalization(
-                    X_train_embeddings,
-                    config.normalization,
+                    X_train_embeddings, config.normalization,
                 )
             )
 
             test_embeddings, normalization_test_time = (
                 apply_normalization(
-                    X_test_embeddings,
-                    config.normalization,
+                    X_test_embeddings, config.normalization,
                 )
             )
 
             predictions, classifier_train_time, inference_time = (
                 train_and_predict(
-                    config,
-                    train_embeddings,
-                    y_train,
-                    test_embeddings,
+                    config, train_embeddings, y_train, test_embeddings,
                 )
             )
 
@@ -412,12 +402,8 @@ def save_embedding_results(results_df):
         ]
 
         csv_columns = [
-            column
-            for column in experiment_df.columns
-            if column not in [
-                "y_true",
-                "y_pred",
-            ]
+            column for column in experiment_df.columns
+            if column not in ["y_true", "y_pred"]
         ]
 
         filename = (
@@ -425,12 +411,7 @@ def save_embedding_results(results_df):
             "_embeddings.csv"
         )
 
-        experiment_df[
-            csv_columns
-        ].to_csv(
-            filename,
-            index=False,
-        )
+        experiment_df[csv_columns].to_csv(filename, index=False)
 
         print(f"Saved: {filename}")
 

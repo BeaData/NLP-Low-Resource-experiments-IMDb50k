@@ -28,13 +28,7 @@ from plots import (
 
 GLOVE_FILE = "../glove/glove.6B.100d.txt"
 TEST_FILE = "imdb_test.csv"
-TRAIN_SIZES = [
-    50,
-    200,
-    500,
-    2000,
-    10000,
-]
+TRAIN_SIZES = [50, 200, 500, 2000, 10000]
 EMBEDDING_DIMENSION = 100
 EXPERIMENT = "V7.1"
 
@@ -120,7 +114,6 @@ def encode_document(text, vectors, embedding_dim=100):
     word_vectors = []
 
     for token in tokenize(text):
-
         if token in vectors:
             word_vectors.append(vectors[token])
 
@@ -163,6 +156,8 @@ def encode_documents(texts, vectors, embedding_dim=100):
 # ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
+
+
 def main():
 
     print()
@@ -206,13 +201,7 @@ def main():
 
     start = time.perf_counter()
 
-    all_texts = pd.concat(
-        [
-            X_train,
-            X_test,
-        ],
-        ignore_index=True,
-    )
+    all_texts = pd.concat([X_train, X_test], ignore_index=True)
 
     vocabulary = build_vocabulary(all_texts)
     vocabulary_time = (time.perf_counter() - start)
@@ -229,8 +218,7 @@ def main():
 
     vectors, glove_load_time = (
         load_required_glove_vectors(
-            GLOVE_FILE,
-            vocabulary,
+            GLOVE_FILE, vocabulary,
         )
     )
 
@@ -252,13 +240,10 @@ def main():
 
     print(f"Total vocabulary: {len(vocabulary):,}")
     print(f"Known vocabulary:  {len(known_words):,}")
-
     print(f"OOV vocabulary:    {len(oov_words):,}")
 
     if vocabulary:
-
         coverage = (len(known_words) / len(vocabulary) * 100)
-
         print(f"Coverage:          {coverage:.4f}%")
 
     # -------------------------------------------------
@@ -345,7 +330,6 @@ def main():
         from sklearn.metrics import (accuracy_score, f1_score)
 
         accuracy = accuracy_score(y_test, predictions)
-
         macro_f1 = f1_score(y_test, predictions, average="macro")
 
         print()
@@ -416,14 +400,12 @@ def main():
     # -------------------------------------------------
 
     csv_columns = [
-        column
-        for column in results_df.columns
+        column for column in results_df.columns
         if column not in ["y_true", "y_pred"]
     ]
 
     results_df[csv_columns].to_csv(
-        "results_V7_1_embeddings.csv",
-        index=False,
+        "results_V7_1_embeddings.csv", index=False,
     )
 
     print()

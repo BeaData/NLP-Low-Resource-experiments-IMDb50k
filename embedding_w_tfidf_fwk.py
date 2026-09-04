@@ -27,14 +27,8 @@ from plots import (
 # ---------------------------------------------------------------------------
 
 GLOVE_FILE = "../glove/glove.6B.100d.txt"
-TEST_FILE = "dbpedia_test_14000.csv"
-TRAIN_SIZES = [
-    50,
-    200,
-    500,
-    2000,
-    10000,
-]
+TEST_FILE = "imdb_test.csv"
+TRAIN_SIZES = [50, 200, 500, 2000, 10000]
 EMBEDDING_DIMENSION = 100
 EXPERIMENT = "V7.2"
 
@@ -87,9 +81,7 @@ def compute_idf(texts):
     document_frequency = {}
 
     for text in texts:
-
         tokens = set(tokenize(text))
-
         for token in tokens:
             document_frequency[token] = (
                 document_frequency.get(token, 0) + 1
@@ -98,10 +90,7 @@ def compute_idf(texts):
     idf = {}
 
     for token, df in document_frequency.items():
-
-        idf[token] = np.log(
-            (1 + document_count) / (1 + df)
-        ) + 1.0
+        idf[token] = np.log((1 + document_count) / (1 + df)) + 1.0
 
     return idf
 
@@ -127,18 +116,13 @@ def encode_document_tfidf(
     tokens = tokenize(text)
 
     if not tokens:
-        return np.zeros(
-            embedding_dim,
-            dtype=np.float32,
-        )
+        return np.zeros(embedding_dim, dtype=np.float32)
 
     # Term frequency
     term_frequency = {}
 
     for token in tokens:
-        term_frequency[token] = (
-            term_frequency.get(token, 0) + 1
-        )
+        term_frequency[token] = (term_frequency.get(token, 0) + 1)
 
     weighted_vectors = []
     weights = []
@@ -182,7 +166,6 @@ def encode_documents_tfidf(
     empty_documents = 0
 
     for text in texts:
-
         embedding = encode_document_tfidf(
             text,
             vectors,
@@ -267,7 +250,7 @@ def main():
     # Load largest training set
     # -------------------------------------------------
 
-    train = load(f"dbpedia_train_{max(TRAIN_SIZES)}.csv")
+    train = load(f"imdb_train_{max(TRAIN_SIZES)}.csv")
 
     if train is None:
         return
@@ -285,13 +268,7 @@ def main():
 
     start = time.perf_counter()
 
-    all_texts = pd.concat(
-        [
-            X_train,
-            X_test,
-        ],
-        ignore_index=True,
-    )
+    all_texts = pd.concat([X_train, X_test], ignore_index=True)
 
     vocabulary = build_vocabulary(all_texts)
     vocabulary_time = (time.perf_counter() - start)
@@ -307,10 +284,7 @@ def main():
     print("Loading required GloVe vectors...")
 
     vectors, glove_load_time = (
-        load_required_glove_vectors(
-            GLOVE_FILE,
-            vocabulary,
-        )
+        load_required_glove_vectors(GLOVE_FILE, vocabulary)
     )
 
     print(f"Vectors loaded: {len(vectors):,}")
@@ -321,7 +295,6 @@ def main():
     # -------------------------------------------------
 
     known_words = set(vectors)
-
     oov_words = vocabulary - known_words
 
     print()
@@ -334,7 +307,6 @@ def main():
     print(f"OOV vocabulary:    {len(oov_words):,}")
 
     if vocabulary:
-
         coverage = (len(known_words) / len(vocabulary) * 100)
         print(f"Coverage:          {coverage:.4f}%")
 
@@ -350,13 +322,12 @@ def main():
     print("=" * 80)
 
     for train_size in TRAIN_SIZES:
-
         print()
         print("#" * 80)
         print(f"TRAINING SIZE: {train_size}")
         print("#" * 80)
 
-        train = load(f"dbpedia_train_{train_size}.csv")
+        train = load(f"imdb_train_{train_size}.csv")
 
         if train is None:
             continue
@@ -417,9 +388,7 @@ def main():
             )
         )
 
-        test_encoding_time = (time.perf_counter()
-            - test_encoding_start
-        )
+        test_encoding_time = (time.perf_counter() - test_encoding_start)
 
         print(f"Test embedding shape: {X_test_embeddings.shape}")
         print(f"Empty test documents: {empty_test}")
@@ -527,12 +496,8 @@ def main():
     # -------------------------------------------------
 
     csv_columns = [
-        column
-        for column in results_df.columns
-        if column not in [
-            "y_true",
-            "y_pred",
-        ]
+        column for column in results_df.columns
+        if column not in ["y_true", "y_pred"]
     ]
 
     results_df[csv_columns].to_csv(
