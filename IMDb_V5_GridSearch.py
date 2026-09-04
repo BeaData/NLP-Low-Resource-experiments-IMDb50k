@@ -129,7 +129,6 @@ def get_wordnet_lemmatizer():
     _ensure_nltk_resources()
 
     from nltk.stem import WordNetLemmatizer
-
     return WordNetLemmatizer()
 
 
@@ -666,16 +665,8 @@ def select_v5_winners(
             continue
 
         winner = candidates.sort_values(
-            by=[
-                "Macro F1",
-                "Accuracy",
-                "Inference time (s)",
-            ],
-            ascending=[
-                False,
-                False,
-                True,
-            ],
+            by=["Macro F1", "Accuracy", "Inference time (s)"],
+            ascending=[False, False, True],
         ).iloc[0]
 
         selected.append(winner)
@@ -892,58 +883,43 @@ def summarize_v5_results(comparison_df: pd.DataFrame) -> pd.DataFrame:
         comparison_df
         .groupby("Train size")
         .agg(
-            Runs=(
-                "Delta Macro F1",
-                "count",
-            ),
-            Mean_Delta_Macro_F1=(
-                "Delta Macro F1",
-                "mean",
-            ),
-            Median_Delta_Macro_F1=(
-                "Delta Macro F1",
-                "median",
-            ),
+            Runs=("Delta Macro F1", "count"),
+            Mean_Delta_Macro_F1=("Delta Macro F1", "mean"),
+            Median_Delta_Macro_F1=("Delta Macro F1", "median"),
             GridSearchCV_Better_Macro_F1=(
                 "Comparison result",
                 lambda values: (
-                    values
-                    == "GridSearchCV better Macro F1"
+                    values == "GridSearchCV better Macro F1"
                 ).sum(),
             ),
             Default_Better_Macro_F1=(
                 "Comparison result",
                 lambda values: (
-                    values
-                    == "Default better Macro F1"
+                    values == "Default better Macro F1"
                 ).sum(),
             ),
             Identical_Macro_F1=(
                 "Comparison result",
                 lambda values: (
-                    values
-                    == "Identical Macro F1"
+                    values == "Identical Macro F1"
                 ).sum(),
             ),
             GridSearchCV_Official_Wins=(
                 "Official winner",
                 lambda values: (
-                    values
-                    == "GridSearchCV"
+                    values == "GridSearchCV"
                 ).sum(),
             ),
             Default_Official_Wins=(
                 "Official winner",
                 lambda values: (
-                    values
-                    == "Default"
+                    values == "Default"
                 ).sum(),
             ),
             Complete_Ties=(
                 "Official winner",
                 lambda values: (
-                    values
-                    == "Tie"
+                    values == "Tie"
                 ).sum(),
             ),
         )
@@ -1004,16 +980,13 @@ def main():
     """
 
     previous_winners = load_winners(PREVIOUS_WINNERS_FILE)
-
     configs = generate_v5_configs(previous_winners)
 
     test_df = load(TEST_FILE)
-
     if test_df is None:
         return
 
     results_df = run_v5_experiments(configs, test_df)
-
     if results_df is None:
         return
 
@@ -1117,11 +1090,9 @@ def main():
     # ------------------------------------------------------------------
 
     comparison_df = calculate_deltas(results_df)
-
     print_v5_comparison(comparison_df)
 
     summary_df = summarize_v5_results(comparison_df)
-
     print_v5_summary(summary_df)
 
     # ------------------------------------------------------------------

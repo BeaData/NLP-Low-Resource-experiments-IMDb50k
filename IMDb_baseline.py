@@ -94,10 +94,7 @@ def main():
         classifier_specs=CLASSIFIER_SPECS,
     )
 
-    print(
-        f"Number of experiments: "
-        f"{len(configs)}"
-    )
+    print(f"Number of experiments: {len(configs)}")
 
     # -------------------------------------------------
     # Run experiments
@@ -106,12 +103,10 @@ def main():
     results_df = run_experiments(configs)
 
     if results_df is None:
-
         print("No results were generated")
         return
 
     if results_df.empty:
-
         print("The results DataFrame is empty")
         return
 
